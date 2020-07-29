@@ -1,13 +1,10 @@
 package com.zestfly.im
 
 import io.ktor.application.*
-import io.ktor.features.ContentNegotiation
-import io.ktor.http.ContentType
 import io.ktor.response.*
-import io.ktor.request.*
-import io.ktor.routing.get
 import io.ktor.routing.post
 import io.ktor.routing.routing
+import org.jetbrains.exposed.sql.Database
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
@@ -15,13 +12,11 @@ fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 @kotlin.jvm.JvmOverloads
 fun Application.module(testing: Boolean = false) {
 //    install(ContentNegotiation){
-//        gson{}
+//        register(ContentType.Application.Json,GsonConverter())
 //    }
+    Database.connect("jdbc:postgresql:",driver = "jdbc:postgresql")
     routing {
-        get("/") {
-            call.respondText("Hello World!", ContentType.Text.Plain)
-        }
-        get("/register") {
+        post("/register") {
             val parameters = call.parameters
             val name = parameters["name"]
             if (name.isNullOrEmpty()) {
